@@ -17,6 +17,7 @@ on:
       - "core/**"
       - "production/**"
       - "staging/**"
+      - "./**"
 
 jobs:
   extract-changes:
