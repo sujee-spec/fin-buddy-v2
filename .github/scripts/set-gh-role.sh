@@ -3,7 +3,7 @@
 root_dir=$(echo "$1" | cut -d '/' -f 1)
 
 case "$root_dir" in
-  staging)
+  root)
     ROLE_ARN=${STAGING_GH_ROLE}
     ;;
   *)
