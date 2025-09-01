@@ -1,0 +1,133 @@
+name: Terraform Deployment
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "root/**"
+      - "core/**"
+      - "production/**"
+      - "staging/**"
+  push:
+    branches:
+      - main
+    paths:
+      - "root/**"
+      - "core/**"
+      - "production/**"
+      - "staging/**"
+
+jobs:
+  extract-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.changed-files.outputs.all_changed_files }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files_ignore: ".github/**"
+          dir_names: true
+          dir_names_exclude_current_dir: true
+          json: true
+          quotepath: false
+          escape_json: false
+
+      - name: Output changed directories
+        run: |
+          changed_dirs=${{ steps.changed-files.outputs.all_changed_files }}
+          echo "::notice title=Changed Files::${changed_dirs}"
+
+  terraform:
+    needs: extract-changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        dir: ${{ fromJson(needs.extract-changes.outputs.matrix) }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{matrix.dir}}
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set Role ARN for AWS configuration
+        id: role-arn
+        run: /home/runner/work/iac/iac/.github/scripts/set-gh-role.sh "${{ matrix.dir }}"
+        env:
+          ROOT_GH_ROLE: ${{ vars.ROOT_GH_ROLE }}
+          CORE_GH_ROLE: ${{ vars.CORE_GH_ROLE }}
+          PRODUCTION_GH_ROLE: ${{ vars.PRODUCTION_GH_ROLE }}
+          STAGING_GH_ROLE: ${{ vars.STAGING_GH_ROLE }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ steps.role-arn.outputs.role_arn }}
+          aws-region: ap-south-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.8.4"
+
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check
+
+      - name: Initialize Terraform
+        id: init
+        run: |
+          terraform init -input=false
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Plan Terraform
+        id: plan
+        timeout-minutes: 10
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        run: |
+          terraform plan -input=false -out=tfplan
+
+      - name: Show Terraform
+        id: show
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        run: terraform show -no-color tfplan
+
+      - name: Post comment For Prod Changes
+        if: github.event_name == 'pull_request' && steps.plan.outcome == 'success'
+        uses: mshick/add-pr-comment@v2
+        env:
+          PLAN: ${{ steps.show.outputs.stdout }}
+        with:
+          message: |
+            ### ${{matrix.dir}} Changes
+            ```diff
+            ${{ env.PLAN }}
+            ```
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Apply
+        id: apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          terraform apply -input=false -auto-approve
