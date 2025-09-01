@@ -15,6 +15,7 @@ This repo uses **GitHub Actions** to automatically validate and apply Terraform 
 - On **Merge to Main** → Runs `terraform apply` to deploy changes.
 
 ### **GitHub Variables Required**
+
 | Variable Name | Description |
 |------------|-------------|
 | `ROOT_GH_ROLE` | IAM Role ARN for Root AWS Account |
