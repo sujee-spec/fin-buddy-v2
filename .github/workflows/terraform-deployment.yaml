@@ -67,7 +67,7 @@ jobs:
 
       - name: Set Role ARN for AWS configuration
         id: role-arn
-        run: /home/runner/work/iac/iac/.github/scripts/set-gh-role.sh "${{ matrix.dir }}"
+        run: /home/runner/work/fin-buddy-v2/fin-buddy-v2/.github/scripts/set-gh-role.sh "${{ matrix.dir }}"
         env:
           ROOT_GH_ROLE: ${{ vars.ROOT_GH_ROLE }}
           CORE_GH_ROLE: ${{ vars.CORE_GH_ROLE }}
