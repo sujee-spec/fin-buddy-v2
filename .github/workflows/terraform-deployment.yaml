@@ -69,9 +69,6 @@ jobs:
         id: role-arn
         run: /home/runner/work/fin-buddy-v2/fin-buddy-v2/.github/scripts/set-gh-role.sh "${{ matrix.dir }}"
         env:
-          ROOT_GH_ROLE: ${{ vars.ROOT_GH_ROLE }}
-          CORE_GH_ROLE: ${{ vars.CORE_GH_ROLE }}
-          PRODUCTION_GH_ROLE: ${{ vars.PRODUCTION_GH_ROLE }}
           STAGING_GH_ROLE: ${{ vars.STAGING_GH_ROLE }}
 
       - name: Configure AWS credentials
