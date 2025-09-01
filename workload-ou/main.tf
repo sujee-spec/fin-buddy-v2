@@ -1,4 +1,4 @@
 module "application_ou" {
-  source                   = "github.com/infraspecdev/terraform-aws-organizational-unit?ref=main"
+  source                   = "github.com/sujeet32"
   organizational_unit_name = "Workload"
 }
