@@ -17,7 +17,6 @@ on:
       - "core/**"
       - "production/**"
       - "staging/**"
-      - "./**"
       - "workload-ou/**"
 
 jobs:
