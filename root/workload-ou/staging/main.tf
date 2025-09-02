@@ -1,8 +1,9 @@
 locals {
-  account_name           = "staging"
-  core_s3_tf_policy_name = "core-terraform-bucket-access"
+  account_name              = "staging"
+  staging_s3_tf_policy_name = "stage-terraform-bucket-access"
 
-  workload_ou_id = [for x in data.aws_organizations_organizational_units.root.children : x.id if x.name == "Workload"][0]
+  workload_ou_id  = [for x in data.aws_organizations_organizational_units.root.children : x.id if x.name == "Workload"][0]
+  core_account_id = [for x in data.aws_organizations_organization.this.accounts : x.id if x.name == "core"][1]
 }
 
 module "aws_organizations_account" {
@@ -36,9 +37,9 @@ module "github_actions_iam_role" {
   ]
 }
 
-resource "aws_iam_role_policy" "core_s3_access" {
+resource "aws_iam_role_policy" "staging_s3_access" {
   provider   = aws.staging
-  name       = local.core_s3_tf_policy_name
+  name       = local.staging_s3_tf_policy_name
   role       = "${local.account_name}-terraform-gh-role"
   depends_on = [module.github_actions_iam_role]
 
@@ -55,8 +56,8 @@ resource "aws_iam_role_policy" "core_s3_access" {
           "s3:ListBucket"
         ]
         Resource = [
-          data.aws_s3_bucket.core.arn,
-          "${data.aws_s3_bucket.core.arn}/*",
+          data.aws_s3_bucket.staging.arn,
+          "${data.aws_s3_bucket.staging.arn}/*",
         ]
       }
     ]
