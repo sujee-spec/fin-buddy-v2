@@ -23,18 +23,3 @@ provider "aws" {
     }
   }
 }
-
-provider "aws" {
-  alias  = "core"
-  region = "ap-south-1"
-
-  assume_role {
-    role_arn = "arn:aws:iam::${local.workload_ou_id}:role/OrganizationAccountAccessRole"
-  }
-
-  default_tags {
-    tags = {
-      ManagedBy = "Terraform"
-    }
-  }
-}
