@@ -2,15 +2,14 @@ locals {
   account_name              = "staging"
   staging_s3_tf_policy_name = "stage-terraform-bucket-access"
 
-  workload_ou_id  = [for x in data.aws_organizations_organizational_units.root.children : x.id if x.name == "Workload"][0]
-  core_account_id = [for x in data.aws_organizations_organization.this.accounts : x.id if x.name == "core"][1]
+  workload_ou_id = [for x in data.aws_organizations_organizational_units.root.children : x.id if x.name == "Workload"][0]
 }
 
 module "aws_organizations_account" {
   source = "github.com/infraspecdev/terraform-aws-account?ref=main"
 
   account_name               = local.account_name
-  account_email              = "sksujeet512@gmail.com"
+  account_email              = "sujeet@infraspec.dev"
   parent_org_id              = local.workload_ou_id
   close_on_deletion          = true
   iam_user_access_to_billing = "DENY"
