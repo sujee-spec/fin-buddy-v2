@@ -2,7 +2,7 @@ locals {
   account_name                 = "production"
   production_s3_tf_policy_name = "stage-terraform-bucket-access"
 
-  workload_ou_id  = [for x in data.aws_organizations_organizational_units.root.children : x.id if x.name == "Workload"][0]
+  workload_ou_id = [for x in data.aws_organizations_organizational_units.root.children : x.id if x.name == "Workload"][0]
 }
 
 module "aws_organizations_account" {
