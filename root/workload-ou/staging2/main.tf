@@ -1,6 +1,6 @@
 locals {
-  account_name              = "staging"
-  staging_s3_tf_policy_name = "stage-terraform-bucket-access"
+  account_name              = "staging2"
+  staging_s3_tf_policy_name = "stage2-terraform-bucket-access"
 
   workload_ou_id = [for x in data.aws_organizations_organizational_units.root.children : x.id if x.name == "Workload"][0]
 }
@@ -9,7 +9,7 @@ module "aws_organizations_account" {
   source = "github.com/infraspecdev/terraform-aws-account?ref=main"
 
   account_name               = local.account_name
-  account_email              = "sujeet@infraspec.dev"
+  account_email              = "sksujeet512+1@gmail.com"
   parent_org_id              = local.workload_ou_id
   close_on_deletion          = true
   iam_user_access_to_billing = "DENY"
@@ -29,7 +29,7 @@ module "github_actions_iam_role" {
   repository_names = ["fin-buddy-v2"]
 
   providers = {
-    aws = aws.staging
+    aws = aws.staging2
   }
   depends_on = [
     module.aws_organizations_account
@@ -37,7 +37,7 @@ module "github_actions_iam_role" {
 }
 
 resource "aws_iam_role_policy" "staging_s3_access" {
-  provider   = aws.staging
+  provider   = aws.staging2
   name       = local.staging_s3_tf_policy_name
   role       = "${local.account_name}-terraform-gh-role"
   depends_on = [module.github_actions_iam_role]
@@ -55,8 +55,8 @@ resource "aws_iam_role_policy" "staging_s3_access" {
           "s3:ListBucket"
         ]
         Resource = [
-          data.aws_s3_bucket.staging.arn,
-          "${data.aws_s3_bucket.staging.arn}/*",
+          data.aws_s3_bucket.staging2.arn,
+          "${data.aws_s3_bucket.staging2.arn}/*",
         ]
       }
     ]
