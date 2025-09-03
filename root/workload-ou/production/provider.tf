@@ -10,7 +10,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias  = "staging2"
+  alias  = "production"
   region = "ap-south-1"
 
   assume_role {

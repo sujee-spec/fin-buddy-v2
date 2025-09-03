@@ -1,8 +1,8 @@
 locals {
-  account_name              = "staging2"
-  staging_s3_tf_policy_name = "stage-terraform-bucket-access"
+  account_name                 = "production"
+  production_s3_tf_policy_name = "stage-terraform-bucket-access"
 
-  workload_ou_id = [for x in data.aws_organizations_organizational_units.root.children : x.id if x.name == "Workload"][0]
+  workload_ou_id  = [for x in data.aws_organizations_organizational_units.root.children : x.id if x.name == "Workload"][0]
 }
 
 module "aws_organizations_account" {
@@ -29,16 +29,16 @@ module "github_actions_iam_role" {
   repository_names = ["fin-buddy-v2"]
 
   providers = {
-    aws = aws.staging2
+    aws = aws.production
   }
   depends_on = [
     module.aws_organizations_account
   ]
 }
 
-resource "aws_iam_role_policy" "staging_s3_access" {
-  provider   = aws.staging2
-  name       = local.staging_s3_tf_policy_name
+resource "aws_iam_role_policy" "core_s3_access" {
+  provider   = aws.production
+  name       = local.production_s3_tf_policy_name
   role       = "${local.account_name}-terraform-gh-role"
   depends_on = [module.github_actions_iam_role]
 
@@ -55,8 +55,8 @@ resource "aws_iam_role_policy" "staging_s3_access" {
           "s3:ListBucket"
         ]
         Resource = [
-          data.aws_s3_bucket.staging2.arn,
-          "${data.aws_s3_bucket.staging2.arn}/*",
+          data.aws_s3_bucket.production.arn,
+          "${data.aws_s3_bucket.production.arn}/*",
         ]
       }
     ]
