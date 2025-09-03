@@ -1,6 +1,6 @@
 locals {
   account_name              = "staging2"
-  staging_s3_tf_policy_name = "stage2-terraform-bucket-access"
+  staging_s3_tf_policy_name = "stage-terraform-bucket-access"
 
   workload_ou_id = [for x in data.aws_organizations_organizational_units.root.children : x.id if x.name == "Workload"][0]
 }
