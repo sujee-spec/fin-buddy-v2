@@ -5,6 +5,5 @@ data "aws_organizations_organizational_units" "root" {
 }
 
 data "aws_s3_bucket" "terraform_state" {
-
   bucket = "sujeet-fin-buddy-s3"
 }
