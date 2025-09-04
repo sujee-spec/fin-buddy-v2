@@ -55,8 +55,8 @@ resource "aws_iam_role_policy" "staging_s3_access" {
           "s3:ListBucket"
         ]
         Resource = [
-          data.aws_s3_bucket.staging.arn,
-          "${data.aws_s3_bucket.staging.arn}/*",
+          data.aws_s3_bucket.tf_state.arn,
+          "${data.aws_s3_bucket.tf_state.arn}/*",
         ]
       }
     ]
