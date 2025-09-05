@@ -36,9 +36,9 @@ output "asg_iam_instance_profile_arn" {
 # output "vpc_name" {
 #   description = "print the vpc name whre the asg group is there"
 #   value = module.asg.
-  
+
 # }
 output "all_subnet_ids_private" {
   description = "print all private subnet ips inside of the vpc"
-  value = data.aws_subnets.private
+  value       = data.aws_subnets.private
 }

@@ -7,8 +7,8 @@ module "asg" {
   name                  = local.asg_name
   health_check_type     = "EC2"
   desired_capacity      = local.asg_desired_capacity //2
-  min_size              = local.asg_min_size //0
-  max_size              = local.asg_max_size //2
+  min_size              = local.asg_min_size         //0
+  max_size              = local.asg_max_size         //2
   vpc_zone_identifier   = data.aws_subnets.private.ids
   protect_from_scale_in = false
 
