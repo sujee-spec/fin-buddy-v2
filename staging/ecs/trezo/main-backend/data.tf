@@ -24,9 +24,9 @@ data "aws_lb" "external_alpha" {
   name = "external-alpha"
 }
 
-data "aws_ecr_image" "backend" { //unsed for now
-  depends_on      = [module.ecr]
-  registry_id     = module.ecr.repository_registry_id
-  repository_name = local.container_name
-  most_recent     = true
-}
+# data "aws_ecr_image" "backend" { //unused for now
+#   depends_on      = [module.ecr]
+#   registry_id     = module.ecr.repository_registry_id
+#   repository_name = local.container_name
+#   most_recent     = true
+# }

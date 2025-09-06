@@ -13,7 +13,7 @@ locals {
   namespace      = "trezo"
 
   # image_uri           = "${module.ecr.repository_url}:${data.aws_ecr_image.backend.image_tags[0]}"
-  image_uri = "public.ecr.aws/nginx/nginx:latest" //temp fix -> will need to upload the code for the image
+  image_uri           = "public.ecr.aws/nginx/nginx:latest" //temp fix -> will need to upload the code for the image
   private_subnets_ids = data.aws_subnets.private.ids
 
   ssm_parameter_name        = "/trezo/main-backend"
