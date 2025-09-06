@@ -6,7 +6,7 @@ locals {
 
   # Cluster
   cluster_name                      = "trezo"
-  cluster_service_connect_namespace = data.aws_service_discovery_http_namespace.trezo.arn
+  cluster_service_connect_namespace = aws_service_discovery_http_namespace.trezo.arn
 
   # Cluster Capacity Providers
   capacity_provider_name = "FARGATE"

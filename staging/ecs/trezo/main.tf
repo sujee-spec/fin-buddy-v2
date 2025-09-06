@@ -10,6 +10,8 @@ module "cluster" {
     }
   ]
   service_connect_namespace = local.cluster_service_connect_namespace
+
+  depends_on = [aws_service_discovery_http_namespace.trezo]
 }
 
 resource "aws_ecs_cluster_capacity_providers" "fargate" {
@@ -21,4 +23,10 @@ resource "aws_ecs_cluster_capacity_providers" "fargate" {
     weight            = 100
     base              = 0
   }
+  depends_on = [module.cluster]
+}
+
+resource "aws_service_discovery_http_namespace" "trezo" {
+  name        = "trezo"
+  description = "Service discovery namespace for ECS cluster trezo"
 }
